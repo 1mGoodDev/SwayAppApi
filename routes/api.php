@@ -4,6 +4,7 @@ use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\CommentController;
 use App\Http\Controllers\api\FollowController;
 use App\Http\Controllers\api\LikeController;
+use App\Http\Controllers\api\NotificationController;
 use App\Http\Controllers\api\PostController;
 use App\Http\Controllers\api\ProfileController;
 use Illuminate\Http\Request;
@@ -19,6 +20,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('feed', PostController::class);
     Route::get('feed-by-following', [PostController::class, 'following']);
+    Route::get('admin-info', [NotificationController::class, 'getAdminInfo']);
 
     Route::post('post/{id}/like', [LikeController::class, 'like']);
     Route::post('post/{id}/comment', [CommentController::class, 'storeComment']);
