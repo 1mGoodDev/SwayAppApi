@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 class NotificationController extends Controller
 {
     public function getAdminInfo() {
-        $adminInfo = AdminInfo::latest();
+        $adminInfo = AdminInfo::latest()->get();
         return new  ApiResource(true, 'Data berhasil diambil', $adminInfo);
     }
 }
