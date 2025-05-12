@@ -101,7 +101,8 @@ class ProfileController extends Controller
             $validated['background_image'] = $request->file('background_image')->store('background_image', 'public');
         }
 
-        $user->update($validated);
+        DB::table('users')->where('id', $user->id)->update($validated);
+
         return new ApiResource(true, 'User berhasil update', $user);
     }
 }
