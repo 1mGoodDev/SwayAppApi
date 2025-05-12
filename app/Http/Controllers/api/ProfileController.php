@@ -85,6 +85,12 @@ class ProfileController extends Controller
             return new ApiResource(false, 'User not authenticated', null);
         }
 
+        // $user->name = $request->name;
+        // $user->job = $request->job;
+        // $user->profile_picture = $request->profile_picture;
+        // $user->background_image = $request->background_image;
+        // $user->bio = $request->bio;
+
         $validated = $request->validate([
             'name' => 'nullable|string',
             'job' => 'nullable|string',
@@ -101,7 +107,7 @@ class ProfileController extends Controller
             $validated['background_image'] = $request->file('background_image')->store('background_image', 'public');
         }
 
-        $updatedUser = $user->save($validated);
-        return new ApiResource(true, 'User berhasil update', $updatedUser);
+        $user->update($validated);
+        return new ApiResource(true, 'Update is Success', $user);
     }
 }
