@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class ProfileController extends Controller
 {
@@ -91,13 +92,17 @@ class ProfileController extends Controller
         // $user->background_image = $request->background_image;
         // $user->bio = $request->bio;
 
-        $validated = $request->validate([
+        $validated = Validator::make($request->all(),[
             'name' => 'nullable|string',
             'job' => 'nullable|string',
-            'profile_picture' => 'nullable|image|max:2048',
-            'background_image' => 'nullable|image|max:2048',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,,svg|max:2048',
+            'background_image' => 'nullable|image|mimes:jpeg,png,jpg,,svg|max:2048',
             'bio' => 'nullable|string',
         ]);
+
+        if ($validated->fails()) {
+            return response()->json($validated->errors(), 422);
+        }
 
         if($request->hasFile('profile_picture')) {
             $validated['profile_picture'] = $request->file('profile_picture')->store('profile_picture', 'public');
