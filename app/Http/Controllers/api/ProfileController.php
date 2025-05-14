@@ -107,7 +107,7 @@ class ProfileController extends Controller
         $user->update($data);
 
 
-        return new ApiResource(true, 'Data Profile Berhasil Diubah!', $user);
+        return new ApiResource(true, 'Data Profile Berhasil Diubah!', $data);
     }
 
     public function updatePhotoProfile(Request $request) {
@@ -145,7 +145,7 @@ class ProfileController extends Controller
             ? asset('storage/profile_pictures/' . $user->profile_picture)
             : null;
 
-        return new ApiResource(true, 'Foto Profile Berhasil Diubah', $user->profile_picture);
+        return new ApiResource(true, 'Foto Profile Berhasil Diubah',    $user->profile_picture);
     }
 
     public function updateBackgroundImage(Request $request) {
