@@ -128,7 +128,7 @@ class ProfileController extends Controller
             $data['background_image'] = $filename;
         }
 
-        $user->update($data);
+        $user->save($data);
 
         // Kalau ingin langsung mengirim URL lengkap:
         $user->profile_picture_url    = $user->profile_picture
