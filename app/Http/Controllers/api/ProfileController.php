@@ -111,35 +111,36 @@ class ProfileController extends Controller
     }
 
     public function updatePhotoProfile(Request $request) {
-        $validator = Validator::make($request->all(), [
-            'profile_picture'   =>  'nullable|image|mimes:png,jpg,svg,jpeg',
-        ]);
+        return response()->json('apa aja');
+        // $validator = Validator::make($request->all(), [
+        //     'profile_picture'   =>  'nullable|image|mimes:png,jpg,svg,jpeg',
+        // ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
+        // if ($validator->fails()) {
+        //     return response()->json($validator->errors(), 422);
+        // }
 
-        $user = Auth::user();
+        // $user = Auth::user();
 
-        $data = [
-            'profile_picture'   =>  $request->profile_picture
-        ];
+        // $data = [
+        //     'profile_picture'   =>  $request->profile_picture
+        // ];
 
-        if ($user->profile_picture) {
-            Storage::disk('public')->delete('profile_pictures/'.$user->profile_picture);
-        }
-        $file = $request->file('profile_picture');
-        $filename = Str::random(20).'.'.$file->extension();
-        $file->storeAs('profile_pictures', $filename, 'public');
-        $data['profile_picture'] = $filename;
+        // if ($user->profile_picture) {
+        //     Storage::disk('public')->delete('profile_pictures/'.$user->profile_picture);
+        // }
+        // $file = $request->file('profile_picture');
+        // $filename = Str::random(20).'.'.$file->extension();
+        // $file->storeAs('profile_pictures', $filename, 'public');
+        // $data['profile_picture'] = $filename;
 
-        $user->update($data);
+        // $user->update($data);
 
-        $user->profile_picture_url    = $user->profile_picture
-            ? asset('storage/profile_pictures/' . $user->profile_picture)
-            : null;
+        // $user->profile_picture_url    = $user->profile_picture
+        //     ? asset('storage/profile_pictures/' . $user->profile_picture)
+        //     : null;
 
-        return new ApiResource(true, 'Foto Profile Berhasil Diubah', $user);
+        // return new ApiResource(true, 'Foto Profile Berhasil Diubah', $user);
     }
 
     public function updateBackgroundImage(Request $request) {
