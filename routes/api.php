@@ -27,7 +27,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('post/{id}/comments', [CommentController::class, 'getComments']);
 
     Route::get('my-profile', [ProfileController::class, 'myProfile']);
-    Route::post('my-profile/update', [ProfileController::class, 'updateProfile']);
+    Route::put('my-profile/update', [ProfileController::class, 'updateProfile']);
     Route::get('profile/{name}', [ProfileController::class, 'otherProfile']);
 
     Route::post('follow/{id}', [FollowController::class, 'follow']);
