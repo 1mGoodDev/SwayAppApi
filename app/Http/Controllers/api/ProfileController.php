@@ -79,7 +79,7 @@ class ProfileController extends Controller
     }
 
     public function updateProfile(Request $request) {
-        $user = Auth::user();
+        $user = Auth::user()->id;
 
         if (!$user) {
             return new ApiResource(false, 'User not authenticated', null);
@@ -108,6 +108,7 @@ class ProfileController extends Controller
         }
 
         $user->update($validated);
+        $user->save();
         return new ApiResource(true, 'Update is Success', $user);
     }
 }
