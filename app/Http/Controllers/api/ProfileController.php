@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class ProfileController extends Controller
@@ -79,34 +80,54 @@ class ProfileController extends Controller
         return new ApiResource(true, 'Data berhasil diambil', $data);
     }
 
-    public function updateProfile(Request $request) {
-        $user = Auth::user();
-
-        if (!$user) {
-            return new ApiResource(false, 'User not authenticated', null);
-        }
-
-        $validated = Validator::make($request->all(),[
-            'name' => 'nullable|string',
-            'job' => 'nullable|string',
-            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,,svg|max:2048',
-            'background_image' => 'nullable|image|mimes:jpeg,png,jpg,,svg|max:2048',
-            'bio' => 'nullable|string',
+    public function update(Request $request)
+    {
+        //define validation rules
+        $validator = Validator::make($request->all(), [
+            'name'          => 'nullable|string',
+            'job'           => 'nullable|string',
+            'bio'           => 'nullable|string',
+            'profile_picture'   =>  'nullable|image|mimes:jpeg,jpg,png,svg|max:2048',
+            'background_image'  =>  'nullable|image|mimes:jpeg,jpg,png,svg|max:2048',
         ]);
 
-        if ($validated->fails()) {
-            return response()->json($validated->errors(), 422);
+        //check if validation fails
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
         }
 
-        if($request->hasFile('profile_picture')) {
-            $validated['profile_picture'] = $request->file('profile_picture')->store('profile_picture', 'public');
+        //find product by ID
+        $user = Auth::user();
+
+        //check if image is not empty
+        if ($request->hasFile('background_image')) {
+
+            //delete old image
+            Storage::delete('background_image/' . basename($user->image));
+
+            //upload image
+            $image = $request->file('background_image');
+            $image->storeAs('background_image', $image->hashName());
+
+            //update product with new image
+            $user->update([
+                'name'         => $request->name(),
+                'job'         => $request->job,
+                'bio'   => $request->bio,
+                'background_image'         => $image->hashName(),
+            ]);
+
+        } else {
+
+            //update product without image
+            $user->update([
+                'name'         => $request->name(),
+                'job'         => $request->job,
+                'bio'   => $request->bio,
+            ]);
         }
 
-        if($request->hasFile('background_image')) {
-            $validated['background_image'] = $request->file('background_image')->store('background_image', 'public');
-        }
-
-        $user->update($validated);
-        return new ApiResource(true, 'Update is Success', $user);
+        //return response
+        return new ApiResource(true, 'Data Profile Berhasil Diubah!', $user);
     }
 }
