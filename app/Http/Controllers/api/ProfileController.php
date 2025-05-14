@@ -88,8 +88,6 @@ class ProfileController extends Controller
             'name'          => 'nullable|string',
             'job'           => 'nullable|string',
             'bio'           => 'nullable|string',
-            'profile_picture'   =>  'nullable|image|mimes:jpeg,jpg,png,svg|max:2048',
-            'background_image'  =>  'nullable|image|mimes:jpeg,jpg,png,svg|max:2048',
         ]);
 
         //check if validation fails
@@ -106,50 +104,73 @@ class ProfileController extends Controller
             'bio'  =>  $request->bio,
         ];
 
-        //check if image is not empty
-        if ($request->hasFile('profile_picture')) {
-            if ($user->profile_picture) {
-                Storage::disk('public')->delete('profile_pictures/'.$user->profile_picture);
-            }
-            $file = $request->file('profile_picture');
-            $filename = Str::random(20) . '.' . $file->extension();
-            $file->storeAs('profile_pictures', $filename, 'public');
-            $data['profile_picture'] = $filename;
+        $user->update($data);
+
+
+        return new ApiResource(true, 'Data Profile Berhasil Diubah!', $user);
+    }
+
+    public function updatePhotoProfile(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'profile_picture'   =>  'nullable|image|mimes:png,jpg,svg,jpeg',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
         }
 
-        //check if image is not empty
-        if ($request->hasFile('background_image')) {
-            if ($user->background_image) {
-                Storage::disk('public')->delete('background_images/'.$user->background_image);
-            }
-            $file = $request->file('background_image');
-            $filename = Str::random(20) . '.' . $file->extension();
-            $file->storeAs('background_images', $filename, 'public');
-            $data['background_image'] = $filename;
+        $user = Auth::user();
+
+        $data = [
+            'profile_picture'   =>  $request->profile_picture
+        ];
+
+        if ($user->profile_picture) {
+            Storage::disk('public')->delete('profile_pictures/'.$user->profile_picture);
         }
+        $file = $request->file('profile_picture');
+        $filename = Str::random(20).'.'.$file->extension();
+        $file->storeAs('profile_pictures', $filename, 'public');
+        $data['profile_picture'] = $filename;
 
         $user->update($data);
 
-        // Kalau ingin langsung mengirim URL lengkap:
         $user->profile_picture_url    = $user->profile_picture
             ? asset('storage/profile_pictures/' . $user->profile_picture)
             : null;
-        $user->background_image_url   = $user->background_image
+
+        return new ApiResource(true, 'Foto Profile Berhasil Diubah', $user);
+    }
+
+    public function updateBackgroundImage(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'background_image'   =>  'nullable|image|mimes:png,jpg,svg,jpeg',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $user = Auth::user();
+
+        $data = [
+            'background_image'   =>  $request->background_image
+        ];
+
+        if ($user->background_image) {
+            Storage::disk('public')->delete('background_images/'.$user->background_image);
+        }
+        $file = $request->file('background_image');
+        $filename = Str::random(20).'.'.$file->extension();
+        $file->storeAs('background_images', $filename, 'public');
+        $data['background_image'] = $filename;
+
+        $user->update($data);
+
+        $user->background_image_url    = $user->background_image
             ? asset('storage/background_images/' . $user->background_image)
             : null;
 
-        //return response
-         try {
-        // ... semua kode validasi, upload, update, dll. ...
-            return new ApiResource(true, 'Data Profile Berhasil Diubah!', $user);
-         } catch (\Throwable $e) {
-        // kirim balik pesan error dan lokasi di kode
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-                'file'    => $e->getFile(),
-                'line'    => $e->getLine(),
-            ], 500);
-    }
+        return new ApiResource(true, 'Foto Profile Berhasil Diubah', $user);
     }
 }
