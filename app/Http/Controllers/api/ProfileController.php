@@ -128,6 +128,12 @@ class ProfileController extends Controller
         if ($user->profile_picture) {
             Storage::disk('public')->delete('profile_pictures/'.$user->profile_picture);
         }
+        if (! $request->hasFile('profile_picture')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'profile_picture is missing or not a valid file'
+            ], 422);
+        }
         $file = $request->file('profile_picture');
         $filename = Str::random(20).'.'.$file->extension();
         $file->storeAs('profile_pictures', $filename, 'public');
