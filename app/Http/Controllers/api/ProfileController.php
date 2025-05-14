@@ -139,6 +139,17 @@ class ProfileController extends Controller
             : null;
 
         //return response
-        return new ApiResource(true, 'Data Profile Berhasil Diubah!', $user);
+         try {
+        // ... semua kode validasi, upload, update, dll. ...
+            return new ApiResource(true, 'Data Profile Berhasil Diubah!', $user);
+         } catch (\Throwable $e) {
+        // kirim balik pesan error dan lokasi di kode
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'file'    => $e->getFile(),
+                'line'    => $e->getLine(),
+            ], 500);
+    }
     }
 }
