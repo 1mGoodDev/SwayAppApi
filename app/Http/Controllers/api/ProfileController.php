@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 
 class ProfileController extends Controller
@@ -99,33 +100,43 @@ class ProfileController extends Controller
         //find product by ID
         $user = Auth::user();
 
+        $data = [
+            'name'  =>  $request->name,
+            'job'  =>  $request->job,
+            'bio'  =>  $request->bio,
+        ];
+
+        //check if image is not empty
+        if ($request->hasFile('profile_picture')) {
+            if ($user->profile_picture) {
+                Storage::disk('public')->delete('profile_pictures/'.$user->profile_picture);
+            }
+            $file = $request->file('profile_picture');
+            $filename = Str::random(20) . '.' . $file->extension();
+            $file->storeAs('profile_pictures', $filename, 'public');
+            $data['profile_picture'] = $filename;
+        }
+
         //check if image is not empty
         if ($request->hasFile('background_image')) {
-
-            //delete old image
-            Storage::delete('background_image/' . basename($user->image));
-
-            //upload image
-            $image = $request->file('background_image');
-            $image->storeAs('background_image', $image->hashName());
-
-            //update product with new image
-            $user->update([
-                'name'         => $request->name,
-                'job'         => $request->job,
-                'bio'   => $request->bio,
-                'background_image'         => $image->hashName(),
-            ]);
-
-        } else {
-
-            //update product without image
-            $user->update([
-                'name'         => $request->name,
-                'job'         => $request->job,
-                'bio'   => $request->bio,
-            ]);
+            if ($user->background_image) {
+                Storage::disk('public')->delete('background_images/'.$user->background_image);
+            }
+            $file = $request->file('background_image');
+            $filename = Str::random(20) . '.' . $file->extension();
+            $file->storeAs('background_images', $filename, 'public');
+            $data['background_image'] = $filename;
         }
+
+        $user->update($data);
+
+        // Kalau ingin langsung mengirim URL lengkap:
+        $user->profile_picture_url    = $user->profile_picture
+            ? asset('storage/profile_pictures/' . $user->profile_picture)
+            : null;
+        $user->background_image_url   = $user->background_image
+            ? asset('storage/background_images/' . $user->background_image)
+            : null;
 
         //return response
         return new ApiResource(true, 'Data Profile Berhasil Diubah!', $user);
