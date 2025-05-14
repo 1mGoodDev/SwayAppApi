@@ -80,17 +80,11 @@ class ProfileController extends Controller
     }
 
     public function updateProfile(Request $request) {
-        $user = Auth::user()->id;
+        $user = Auth::user();
 
         if (!$user) {
             return new ApiResource(false, 'User not authenticated', null);
         }
-
-        // $user->name = $request->name;
-        // $user->job = $request->job;
-        // $user->profile_picture = $request->profile_picture;
-        // $user->background_image = $request->background_image;
-        // $user->bio = $request->bio;
 
         $validated = Validator::make($request->all(),[
             'name' => 'nullable|string',
@@ -113,7 +107,6 @@ class ProfileController extends Controller
         }
 
         $user->update($validated);
-        $user->save();
         return new ApiResource(true, 'Update is Success', $user);
     }
 }
