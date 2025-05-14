@@ -80,7 +80,7 @@ class ProfileController extends Controller
         return new ApiResource(true, 'Data berhasil diambil', $data);
     }
 
-    public function update(Request $request)
+    public function updateProfile(Request $request)
     {
         //define validation rules
         $validator = Validator::make($request->all(), [
@@ -111,7 +111,7 @@ class ProfileController extends Controller
 
             //update product with new image
             $user->update([
-                'name'         => $request->name(),
+                'name'         => $request->name,
                 'job'         => $request->job,
                 'bio'   => $request->bio,
                 'background_image'         => $image->hashName(),
@@ -121,7 +121,7 @@ class ProfileController extends Controller
 
             //update product without image
             $user->update([
-                'name'         => $request->name(),
+                'name'         => $request->name,
                 'job'         => $request->job,
                 'bio'   => $request->bio,
             ]);
