@@ -28,7 +28,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('my-profile', [ProfileController::class, 'myProfile']);
     Route::put('my-profile/update', [ProfileController::class, 'updateProfile']);
-    Route::put('my-profile/update-photo', [ProfileController::class, 'updatePhotoProfile']);
+    Route::put('my-profile/update/photo', [ProfileController::class, 'updatePhotoProfile']);
     Route::put('my-profile/update/background-img', [ProfileController::class, 'updateBackgroundImage']);
     Route::get('profile/{name}', [ProfileController::class, 'otherProfile']);
 
