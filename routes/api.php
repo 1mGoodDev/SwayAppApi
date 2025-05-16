@@ -7,6 +7,7 @@ use App\Http\Controllers\api\LikeController;
 use App\Http\Controllers\api\NotificationController;
 use App\Http\Controllers\api\PostController;
 use App\Http\Controllers\api\ProfileController;
+use App\Http\Controllers\api\SearchController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -31,6 +32,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('my-profile/update/photo', [ProfileController::class, 'updatePhotoProfile']);
     Route::post('my-profile/update/background-img', [ProfileController::class, 'updateBackgroundImage']);
     Route::get('profile/{name}', [ProfileController::class, 'otherProfile']);
+
+    Route::get('users', [SearchController::class, 'searchUser']);
 
     Route::post('follow/{id}', [FollowController::class, 'follow']);
     Route::post('unfollow/{id}', [FollowController::class, 'unfollow']);
