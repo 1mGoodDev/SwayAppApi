@@ -28,10 +28,6 @@ class SearchController extends Controller
             ];
         });
 
-        return response()->json([
-            'success'   =>  true,
-            'message'   =>  'Data successfully found',
-            'data'  =>  $data
-        ]);
+        return new ApiResource(true, 'Data successfully found', $data);
     }
 }
