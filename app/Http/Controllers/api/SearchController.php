@@ -19,6 +19,11 @@ class SearchController extends Controller
                     ->orWhere('email', 'like', '%' . $query . '%');
             })->get();
 
-        return new ApiResource(true, 'data successfully found', $user);
+        return response()->json([
+            'id'    =>  $user->id,
+            'name'  =>  $user->name,
+            'job'   =>  $user->job,
+            'status'    =>  $user->status,
+        ]);
     }
 }
