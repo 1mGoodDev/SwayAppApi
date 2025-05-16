@@ -19,11 +19,19 @@ class SearchController extends Controller
                     ->orWhere('email', 'like', '%' . $query . '%');
             })->get();
 
+        $data = $user->map(function ($u) {
+            return [
+                'id'    =>  $u->id,
+                'name'  =>  $u->name,
+                'job'   =>  $u->job,
+                'status'    =>  $u->status,
+            ];
+        });
+
         return response()->json([
-            'id'    =>  $user->id,
-            'name'  =>  $user->name,
-            'job'   =>  $user->job,
-            'status'    =>  $user->status,
+            'success'   =>  true,
+            'message'   =>  'Data successfully found',
+            'data'  =>  $data
         ]);
     }
 }
