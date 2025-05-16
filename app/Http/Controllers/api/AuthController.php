@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ApiResource;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -75,6 +76,6 @@ class AuthController extends Controller
         $user->update(['status' => 'inactive']);
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json(['Berhasil Logout']);
+        return new ApiResource(true, 'Berhasil Logout');
     }
 }

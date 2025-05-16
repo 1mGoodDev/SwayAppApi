@@ -41,7 +41,7 @@ class PostController extends Controller
     {
         $validated = $request->validate([
             'content' => 'nullable|string',
-            'image' => 'nullable|image|max:2048'
+            'image' => 'nullable|image|max:20p48'
         ]);
 
         $validated['user_id'] = Auth::id();
