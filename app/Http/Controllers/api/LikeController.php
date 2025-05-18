@@ -21,11 +21,15 @@ class LikeController extends Controller
         if ($like) {
             $like->delete();
             $message = "Tidak Disukai";
+            $status = false;
         } else {
-            $post->likes()->create(['user_id' => $user->id]);
+            $like = $post->likes()->create(['user_id' => $user->id]);
             $message = 'Disukai';
+            $status = true;
         }
 
-        return new ApiResource(true, $message, $like);
+        return new ApiResource(true, $message, ['liked' => $status, 'total_likes' => $post->likes()->count(),]);
     }
+
+
 }
