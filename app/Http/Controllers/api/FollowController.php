@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ApiResource;
+use App\Models\Follow;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,29 +12,39 @@ use Illuminate\Support\Facades\DB;
 
 class FollowController extends Controller
 {
-    public function follow($id) {
-        $user = User::findOrFail($id);
-
-        if ($user->id === Auth::id()) {
-            return new ApiResource(false, 'Tidak bisa follow diri sendiri');
-        }
-
-        DB::table('follows')->updateOrInsert([
-            'follower_id' => Auth::id(),
-            'following_id' => $user->id,
+    public function follow(Request $request) {
+        $request->validate([
+            'user_id'   =>  'required|exists:users,id'
         ]);
 
-        return new ApiResource(true, 'Berhasil follow user');
-    }
+        if($request->user_id == $request->user()->id) {
+            return response()->json([
+                'status'    =>  'error',
+                'message'   =>  'Can not follow yourself'
+            ]);
+        }
 
-    public function unfollow($id) {
-        $user = User::findOrFail($id);
+        $follow = Follow::where('follower_id', $request->user()->id)
+            ->where('following_id', $request->user_id)
+            ->first();
 
-        DB::table('follows')
-            ->where('follower_id', Auth::id())
-            ->where('following_id', $user->id)
-            ->delete();
+        if($follow) {
+            $follow->delete();
 
-        return new ApiResource(true, 'Berhasil unfollow user');
+            return response()->json([
+                'status'    =>  'success',
+                'message'   =>  'Unfollow user'
+            ]);
+        } else {
+            Follow::create([
+                'follower_id'   =>  $request->user()->id,
+                'following_id'  =>  $request->user_id
+            ]);
+
+            return response()->json([
+                'status'    =>  'success',
+                'message'   =>  'Success to Follow'
+            ]);
+        }
     }
 }
