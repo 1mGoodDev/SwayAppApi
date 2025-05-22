@@ -36,6 +36,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('users', [SearchController::class, 'searchUser']);
 
     Route::post('follow', [FollowController::class, 'follow']);
+    Route::get('following', [FollowController::class, 'getFollowing']);
 
     Route::post('logout', [AuthController::class, 'logout']);
 });

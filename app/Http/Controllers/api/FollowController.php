@@ -12,6 +12,20 @@ use Illuminate\Support\Facades\DB;
 
 class FollowController extends Controller
 {
+    public function getFollowing(Request $request)
+{
+    $followings = Follow::with(['following: id,name'])
+        ->where('follower_id', $request->user()->id)
+        ->get()
+        ->pluck('following'); // Ambil data user yang di-follow
+
+    return response()->json([
+        'status' => 'success',
+        'data' => $followings
+    ]);
+}
+
+
     public function follow(Request $request) {
         $request->validate([
             'user_id'   =>  'required|exists:users,id'
