@@ -14,7 +14,7 @@ class FollowController extends Controller
 {
     public function getFollowing(Request $request)
 {
-    $followings = Follow::with(['following: id,name'])
+    $followings = Follow::with('following')
         ->where('follower_id', $request->user()->id)
         ->get()
         ->pluck('following'); // Ambil data user yang di-follow
